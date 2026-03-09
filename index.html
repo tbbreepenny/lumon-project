@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lumon Industries — Macrodata Refinement</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ============================================================
+       INTRO SCREEN
+       ============================================================ -->
+  <div id="introScreen" onclick="dismissIntro()">
+    <div class="intro-canvas-wrap">
+      <canvas id="introCanvas"></canvas>
+    </div>
+    <div class="intro-center">
+      <span class="intro-logo">LUMON</span>
+      <span class="intro-sub">Macrodata Refinement Division</span>
+      <div class="intro-divider"></div>
+      <span class="intro-click">CLICK TO ENTER</span>
+    </div>
+  </div>
+
+  <!-- CRT scan line -->
+  <div class="scan-line"></div>
+
+  <!-- ============================================================
+       WAFFLE PARTY MODAL
+       ============================================================ -->
+  <div id="waffleParty" style="display:none; position:fixed; inset:0; z-index:5000; overflow:hidden;">
+    <canvas id="waffleCanvas" style="position:absolute; inset:0; width:100%; height:100%;"></canvas>
+
+    <div id="waffleContent" style="
+      position:relative; z-index:10;
+      width:100%; height:100%;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      text-align:center; padding:40px;
+    ">
+      <!-- Flash overlay -->
+      <div id="waffleFlash" style="
+        position:absolute; inset:0; background:#fff;
+        opacity:0; pointer-events:none;
+        transition: opacity 0.1s;
+      "></div>
+
+      <div id="milchickWrap" style="opacity:0; transform:translateY(30px); transition: all 1s ease;">
+
+        <div style="
+          font-family:'VT323',monospace;
+          font-size:clamp(0.6rem,2vw,0.85rem);
+          letter-spacing:0.3em;
+          color:rgba(0,0,0,0.4);
+          margin-bottom:16px;
+        ">FLOOR MANAGER — S. MILCHICK</div>
+
+        <!-- ASCII Milchick dance -->
+        <pre id="milchickAscii" style="
+          font-family:'Share Tech Mono',monospace;
+          font-size:clamp(0.55rem,1.3vw,0.8rem);
+          line-height:1.4;
+          color:#111;
+          margin-bottom:28px;
+          transition: all 0.2s;
+        "></pre>
+
+        <div style="
+          font-family:'VT323',monospace;
+          font-size:clamp(3rem,10vw,7rem);
+          color:#111;
+          letter-spacing:0.15em;
+          line-height:1;
+          margin-bottom:12px;
+          text-shadow: 4px 4px 0 rgba(0,0,0,0.08);
+        ">WAFFLE PARTY</div>
+
+        <div style="
+          font-family:'VT323',monospace;
+          font-size:clamp(1.2rem,4vw,2rem);
+          color:#333;
+          letter-spacing:0.4em;
+          margin-bottom:32px;
+        ">GRANTED</div>
+
+        <div id="milchickSpeech" style="
+          font-family:'IBM Plex Mono',monospace;
+          font-size:clamp(0.6rem,1.5vw,0.8rem);
+          color:#444;
+          letter-spacing:0.08em;
+          line-height:2;
+          max-width:520px;
+          margin:0 auto 36px;
+          min-height:80px;
+        "></div>
+
+        <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-bottom:40px;">
+          <div class="waffle-icon">🧇</div>
+          <div class="waffle-icon" style="animation-delay:0.2s">🧇</div>
+          <div class="waffle-icon" style="animation-delay:0.4s">🧇</div>
+          <div class="waffle-icon" style="animation-delay:0.6s">🧇</div>
+          <div class="waffle-icon" style="animation-delay:0.8s">🧇</div>
+        </div>
+
+        <button
+          onclick="closeWaffleParty()"
+          onmouseover="this.style.background='#333'"
+          onmouseout="this.style.background='#111'"
+          style="
+            background:#111; border:2px solid #111; color:#fff;
+            padding:12px 40px;
+            font-family:'IBM Plex Mono',monospace;
+            font-size:0.7rem; letter-spacing:0.25em;
+            cursor:pointer; transition:all 0.2s;
+          ">
+          RETURN TO WORK
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       KIER EAGAN QUOTE MODAL
+       ============================================================ -->
+  <div class="kier-modal" id="kierModal">
+    <div class="kier-box">
+      <div class="kier-portrait">K</div>
+      <p class="kier-quote" id="kierQuote"></p>
+      <p class="kier-attribution">— KIER EAGAN, FOUNDER<br>LUMON INDUSTRIES</p>
+      <button class="btn" onclick="closeKier()">ACKNOWLEDGE</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MAIN TERMINAL
+       ============================================================ -->
+  <div class="terminal">
+
+    <!-- Header -->
+    <div class="header">
+      <div>
+        <div class="lumon-logo">LUMON<span>.</span>INDUSTRIES</div>
+        <div style="font-size:0.58rem; letter-spacing:0.25em; color:var(--lumon-grey); margin-top:2px;">
+          MACRODATA REFINEMENT DIVISION — TERMINAL v4.2.1
+        </div>
+      </div>
+      <div class="header-right">
+        <div><span class="status-dot"></span> SYSTEM NOMINAL</div>
+        <div id="clock">--:--:-- --</div>
+        <div>FLOOR: 4 &nbsp;|&nbsp; WING: B</div>
+      </div>
+    </div>
+
+    <!-- Employee Bar -->
+    <div class="employee-bar">
+      <div class="employee-info">
+        <div class="emp-field"><label>EMPLOYEE</label><span id="empName">MARK S.</span></div>
+        <div class="emp-field"><label>EMPLOYEE ID</label><span>MDR-0042</span></div>
+        <div class="emp-field"><label>SESSION</label><span id="sessionId">SN-29471-B</span></div>
+        <div class="emp-field"><label>SEVERANCE STATUS</label><span style="color:var(--lumon-green)">ACTIVE</span></div>
+      </div>
+      <div class="clearance">CLEARANCE LEVEL 2</div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="main-grid">
+
+      <!-- MDR Primary Screen -->
+      <div class="mdr-screen">
+        <div class="mdr-screen-header">
+          <span>MACRODATA REFINEMENT — ACTIVE FILE</span>
+          <span class="bin-label" id="currentFile">FILE: MDR-4417-C</span>
+        </div>
+
+        <!-- Number field -->
+        <div class="number-field" id="numberField">
+          <div class="numbers-container" id="numbersContainer">
+            <!-- Numbers injected by main.js -->
+          </div>
+        </div>
+
+        <!-- Bin tray -->
+        <div class="bin-tray" id="binTray">
+          <div class="bin active" data-bin="WO" onclick="selectBin('WO')">
+            <span class="bin-name">WO</span>
+            <div class="bin-fill"><div class="bin-fill-bar" id="fill-WO" style="width:0%"></div></div>
+            <span class="bin-pct" id="pct-WO">0%</span>
+          </div>
+          <div class="bin" data-bin="FC" onclick="selectBin('FC')">
+            <span class="bin-name">FC</span>
+            <div class="bin-fill"><div class="bin-fill-bar" id="fill-FC" style="width:0%"></div></div>
+            <span class="bin-pct" id="pct-FC">0%</span>
+          </div>
+          <div class="bin" data-bin="DR" onclick="selectBin('DR')">
+            <span class="bin-name">DR</span>
+            <div class="bin-fill"><div class="bin-fill-bar" id="fill-DR" style="width:0%"></div></div>
+            <span class="bin-pct" id="pct-DR">0%</span>
+          </div>
+          <div class="bin" data-bin="MA" onclick="selectBin('MA')">
+            <span class="bin-name">MA</span>
+            <div class="bin-fill"><div class="bin-fill-bar" id="fill-MA" style="width:0%"></div></div>
+            <span class="bin-pct" id="pct-MA">0%</span>
+          </div>
+          <div class="bin" data-bin="TE" onclick="selectBin('TE')">
+            <span class="bin-name">TE</span>
+            <div class="bin-fill"><div class="bin-fill-bar" id="fill-TE" style="width:0%"></div></div>
+            <span class="bin-pct" id="pct-TE">0%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="sidebar">
+
+        <!-- Daily Quota -->
+        <div class="sidebar-panel">
+          <div class="panel-header">DAILY QUOTA</div>
+          <div class="panel-body">
+            <div class="quota-ring">
+              <div class="ring-wrap">
+                <svg width="60" height="60" viewBox="0 0 60 60">
+                  <circle cx="30" cy="30" r="24" fill="none" stroke="rgba(0,255,136,0.08)" stroke-width="4"/>
+                  <circle cx="30" cy="30" r="24" fill="none" stroke="#00ff88" stroke-width="4"
+                    stroke-dasharray="150.8" id="quotaArc" stroke-dashoffset="150.8"
+                    style="filter:drop-shadow(0 0 4px #00ff88); transition: stroke-dashoffset 1s ease;"/>
+                </svg>
+                <div class="ring-text">
+                  <span class="ring-pct" id="quotaPct">0%</span>
+                </div>
+              </div>
+              <div class="ring-info">
+                <span class="label">REFINED TODAY</span>
+                <span class="val" id="refinedCount">0 <span style="font-size:0.6rem;color:var(--lumon-grey)">/ 170</span></span>
+                <div style="margin-top:8px;">
+                  <span class="label">EST. COMPLETION</span>
+                  <span class="val">14:33</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Wellness -->
+        <div class="sidebar-panel">
+          <div class="panel-header">WELLNESS INDICATORS</div>
+          <div class="panel-body">
+            <div class="wellness-bars">
+              <div class="wellness-item">
+                <label>FOCUS</label>
+                <div class="wellness-track"><div class="wellness-fill" style="width:78%"></div></div>
+              </div>
+              <div class="wellness-item">
+                <label>COMPLIANCE</label>
+                <div class="wellness-track"><div class="wellness-fill" style="width:95%"></div></div>
+              </div>
+              <div class="wellness-item">
+                <label>MOOD</label>
+                <div class="wellness-track"><div class="wellness-fill" style="width:52%"></div></div>
+              </div>
+              <div class="wellness-item">
+                <label>PRODUCTIVITY</label>
+                <div class="wellness-track"><div class="wellness-fill" style="width:67%"></div></div>
+              </div>
+            </div>
+            <div style="margin-top:12px; font-size:0.58rem; color:var(--lumon-grey); letter-spacing:0.1em;">
+              NEXT WELLNESS CHECK: <span style="color:var(--lumon-green-dim)">09:45</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Waffle Party Notice -->
+        <div class="sidebar-panel waffle-notice">
+          <span class="waffle-title">★ WAFFLE PARTY ★</span>
+          <div class="waffle-sub">
+            Congratulations to the MDR team on exceeding<br>
+            Q3 refinement targets. A waffle party has<br>
+            been approved by Ms. Cobel.<br><br>
+            <span style="color:rgba(255,170,0,0.4)">DATE AND TIME: PENDING REVIEW</span>
+          </div>
+        </div>
+
+        <!-- Message from Cobel -->
+        <div class="sidebar-panel">
+          <div class="panel-header">FROM MANAGEMENT</div>
+          <div class="panel-body">
+            <div class="cobel-msg">
+              <span class="from">FROM: H. COBEL / FLOOR MGR.</span>
+              Please maintain number separation protocols. Emotional responses
+              to the data are strictly prohibited and will be noted. Remember:
+              you are here to serve Lumon.<span class="cursor-blink"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- System Log -->
+        <div class="sidebar-panel">
+          <div class="panel-header">SYSTEM LOG</div>
+          <div class="panel-body">
+            <div class="log-entries" id="logEntries">
+              <div class="log-entry ok"><span class="ts">08:01</span><span class="msg">Session authenticated</span></div>
+              <div class="log-entry">   <span class="ts">08:03</span><span class="msg">File MDR-4417-C loaded</span></div>
+              <div class="log-entry">   <span class="ts">08:11</span><span class="msg">Bin WO selected</span></div>
+              <div class="log-entry warn"><span class="ts">08:22</span><span class="msg">Idle threshold warning</span></div>
+              <div class="log-entry ok"><span class="ts">08:23</span><span class="msg">Activity resumed</span></div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /sidebar -->
+    </div><!-- /main-grid -->
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <div class="status-left">
+        <div class="status-item">ACTIVE BIN: <span class="val" id="activeBinLabel">WO</span></div>
+        <div class="status-item">REFINED: <span class="val" id="refinedTotal">0</span></div>
+        <div class="status-item">FLAGGED: <span class="val" id="flaggedTotal" style="color:var(--lumon-amber)">0</span></div>
+      </div>
+      <div style="font-size:0.6rem; color:var(--lumon-grey);">
+        LUMON INDUSTRIES © ALL RIGHTS HELD IN PERPETUITY &nbsp;|&nbsp; REMEMBER: YOUR OUTIE LOVES YOU
+      </div>
+    </div>
+
+  </div><!-- /terminal -->
+
+  <!-- Scripts loaded at end of body -->
+  <script src="intro.js"></script>
+  <script src="main.js"></script>
+
+</body>
+</html>
